@@ -1,0 +1,28 @@
+.usersContainer {
+    padding: 20px;
+}
+  
+.usersTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+  
+.usersTable th, .usersTable td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+}
+  
+.usersTable th {
+    background-color: #bfbfbf; /* Серый цвет для заголовков */
+}
+  
+.usersTable a {
+    color: #0000ee; /* Цвет ссылки */
+    text-decoration: none;
+}
+  
+.usersTable a:hover {
+    text-decoration: underline;
+}
+  

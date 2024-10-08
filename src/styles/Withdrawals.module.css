@@ -1,0 +1,31 @@
+.usersContainer {
+    padding: 20px;
+  }
+  
+  .usersTable {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .usersTable th, .usersTable td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .usersTable th {
+    background-color: #bfbfbf; /* Серый цвет для заголовков */
+  }
+  
+  button {
+    background-color: #808080; /* Темно-серый фон */
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #6e6e6e; /* Светлее при наведении */
+  }
+  

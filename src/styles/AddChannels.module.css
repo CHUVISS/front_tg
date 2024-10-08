@@ -1,0 +1,47 @@
+.channelsContainer {
+  padding: 20px;
+}
+
+.channelsTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.channelsTable th, .channelsTable td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
+}
+
+.channelsTable th {
+  background-color: #bfbfbf; /* Серый цвет для заголовков */
+}
+
+a {
+  color: blue;
+  text-decoration: underline;
+}
+
+button {
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.acceptButton {
+  background-color: green;
+  color: white;
+}
+
+.acceptButton:hover {
+  background-color: #45a049; /* Более светлый зеленый при наведении */
+}
+
+.declineButton {
+  background-color: red;
+  color: white;
+}
+
+.declineButton:hover {
+  background-color: #d63031; /* Более светлый красный при наведении */
+}

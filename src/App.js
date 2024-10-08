@@ -1,25 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Sidebar from './components/Sidebar'; // Импортируем боковое меню
 
-function App() {
+import AddChannels from './pages/AddChannels'; // Страница "Добавление каналов"
+import Users from './pages/Users'; // Страница "Пользователи"
+import Withdrawals from './pages/Withdrawals'; // Страница "Выводы"
+import Analytics from './pages/Analytics'; // Страница "Аналитика"
+import Pars from './pages/Pars'; //Страница "Парсинга"
+import Footer from './components/Footer';
+import LoginPage from './pages/LoginPage';
+
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div style={{ display: 'flex' }}>
+        <LoginPage />
+        <Sidebar />
+        <div style={{ flex: 1, padding: '20px' }}>
+          <Routes>
+            <Route path="/channels" element={<AddChannels />} />
+            <Route path="/users" element={<Users />} />
+            <Route path="/withdrawals" element={<Withdrawals />} />
+            <Route path="/analytics" element={<Analytics />} />
+            <Route path="/pars" element={<Pars />} />
+          </Routes>
+        </div>
+      </div>
+      <Footer />
+    </Router>
   );
-}
+};
 
 export default App;
