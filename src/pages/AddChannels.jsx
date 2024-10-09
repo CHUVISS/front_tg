@@ -50,20 +50,26 @@ const AddChannels = () => {
     }
   };
 
-  const handleAccept = async (channelId, username) => {
+  const handleAccept = async (channelId, username, linkSocial, socialNetwork) => {
     const isConfirmed = window.confirm(`Вы уверены, что хотите принять ${username}?`);
-
+  
     if (isConfirmed) {
       try {
         // Пример запроса для принятия канала через POST
-        const response = await fetch(`/api/channels/accept`, {
+        const response = await fetch(`http://localhost:8080/users/add`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ id: channelId }),
+          body: JSON.stringify({
+            social_link: linkSocial,       // Пример: "https://social.com/user"
+            tgId: username,                // Пример: "user123"
+            wallet: "TRC20",               // Пример: "TRC20"
+            social_name: socialNetwork,    // Пример: "Instagram"
+            count_views: 0                 // Пример: 0
+          }),
         });
-
+  
         if (response.ok) {
           // Логика обновления состояния после принятия (например, убираем канал из списка)
           setChannels(channels.filter((channel) => channel.id !== channelId));
@@ -77,6 +83,7 @@ const AddChannels = () => {
       }
     }
   };
+  
 
   return (
     <div className={styles.channelsContainer}>
@@ -112,7 +119,7 @@ const AddChannels = () => {
               <td>
                 <button
                   className={styles.acceptButton}
-                  onClick={() => handleAccept(channel.id, channel.username)}
+                  onClick={() => handleAccept(channel.id, channel.username, channel.link, channel.socialNetwork)}
                 >
                   Принять
                 </button>

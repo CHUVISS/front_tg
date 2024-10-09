@@ -9,6 +9,7 @@ import Analytics from './pages/Analytics'; // Страница "Аналитик
 import Pars from './pages/Pars'; //Страница "Парсинга"
 import Footer from './components/Footer';
 import LoginPage from './pages/LoginPage';
+import UserPage from './pages/UserPage';
 
 const App = () => {
   return (
@@ -20,6 +21,7 @@ const App = () => {
           <Routes>
             <Route path="/channels" element={<AddChannels />} />
             <Route path="/users" element={<Users />} />
+            <Route path="/users/:tgId" element={<UserPage />} />
             <Route path="/withdrawals" element={<Withdrawals />} />
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/pars" element={<Pars />} />

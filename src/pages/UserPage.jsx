@@ -1,29 +1,57 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom'; // Импортируем useParams
 import styles from '../styles/UserPage.module.css';
 
 const UserPage = () => {
+  const { tgId } = useParams(); // Извлекаем tgId из URL
+  const [user, setUser] = useState(null); // Состояние для данных о пользователе
   const [activeTab, setActiveTab] = useState('youtube'); // По умолчанию выбрана вкладка YouTube
 
-  // Пример данных о пользователе и его каналах
-  const user = {
-    username: '@user1',
-    telegramLink: 'https://t.me/user1',
-    wallet: 'TRC20: ABC1234567890',
-    channelsCount: 5,
-    referrals: 10,
-    balance: 500,
-    channels: [
-      { platform: 'YouTube', link: 'https://youtube.com/user1', viewsTotal: 1000, viewsWeek: 200, viewsDay: 50 },
-      { platform: 'TikTok', link: 'https://tiktok.com/@user1', viewsTotal: 5000, viewsWeek: 800, viewsDay: 100 },
-      { platform: 'Instagram', link: 'https://instagram.com/user1', viewsTotal: 3000, viewsWeek: 600, viewsDay: 75 },
-      { platform: 'Facebook', link: 'https://facebook.com/user1', viewsTotal: 2000, viewsWeek: 400, viewsDay: 20 }
-    ]
+  // Функция для получения данных о пользователе
+  const fetchUserData = async (tgId) => {
+    try {
+      const response = await fetch(`http://localhost:8080/users?tgID=${tgId}`);
+      if (!response.ok) {
+        throw new Error(`Ошибка HTTP: ${response.status}`);
+      }
+      const data = await response.json();
+      
+      // Логируем формат данных, которые приходят с бэкенда
+      console.log('Данные пользователя:', data);
+
+      // Преобразование данных для удобства работы
+      const transformedUser = {
+        username: `${data.TgId}`, // Форматируем имя пользователя
+        telegramLink: `https://t.me/${data.TgId}`,
+        wallet: data.Wallet,
+        channelsCount: data.Channels, // Используем channels из ответа
+        referrals: data.Referrals,
+        balance: data.Balance,
+        channels: [] // Здесь мы оставим пустой массив, если не передаются данные о каналах
+      };
+
+      // Если у вас есть данные о каналах, добавьте их здесь
+      // Например, вы можете сделать дополнительный запрос к API для получения каналов пользователя
+
+      setUser(transformedUser); // Устанавливаем данные о пользователе
+    } catch (error) {
+      console.error('Ошибка при загрузке данных пользователя:', error);
+    }
   };
+
+  useEffect(() => {
+    fetchUserData(tgId); // Загружаем данные пользователя при монтировании компонента
+  }, [tgId]);
 
   // Функция для смены активной вкладки
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
+
+  // Если данные пользователя еще не загружены
+  if (!user) {
+    return <p>Загрузка...</p>; // Отображаем текст загрузки
+  }
 
   return (
     <div className={styles.userContainer}>

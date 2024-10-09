@@ -1,32 +1,44 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from '../styles/Users.module.css'; // CSS-модуль для стилизации
 import { Link } from 'react-router-dom';
 
 const Users = () => {
-  // Пример данных для отображения в таблице
-  const usersData = [
-    {
-      id: 1,
-      telegramUsername: '@user1',
-      telegramLink: 'https://t.me/user1',
-      channelsCount: 5,
-      wallet: 'TRC20-wallet-address-1',
-      referrals: 10,
-      views: 10000,
-      balance: 500,
-    },
-    {
-      id: 2,
-      telegramUsername: '@user2',
-      telegramLink: 'https://t.me/user2',
-      channelsCount: 3,
-      wallet: 'TRC20-wallet-address-2',
-      referrals: 7,
-      views: 8500,
-      balance: 300,
-    },
-    // Добавьте больше пользователей по необходимости
-  ];
+  const [usersData, setUsersData] = useState([]);
+
+  // Функция для получения данных с бэкенда и обновления состояния
+  const fetchUsersData = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/users/all');
+      if (!response.ok) {
+        throw new Error(`Ошибка HTTP: ${response.status}`);
+      }
+      const data = await response.json();
+  
+  
+      if (Array.isArray(data) && data.length > 0) {
+        const transformedData = data.map((user, index) => ({
+          id: index + 1,
+          telegramUsername: `${user.TgId}`,
+          telegramLink: `https://t.me/${user.TgId}`,
+          channelsCount: user.Channels,
+          wallet: user.Wallet,
+          referrals: user.Referrals,
+          views: user.CountViews,
+          balance: user.Balance,
+        }));
+        setUsersData(transformedData);
+      } else {
+        console.log('Данные пользователей пустые или не являются массивом');
+      }
+    } catch (error) {
+      console.error('Ошибка при загрузке данных пользователей:', error);
+    }
+  };
+  
+
+  useEffect(() => {
+    fetchUsersData(); // Загружаем данные при монтировании компонента
+  }, []);
 
   return (
     <div className={styles.usersContainer}>
@@ -46,7 +58,7 @@ const Users = () => {
           {usersData.map((user) => (
             <tr key={user.id}>
               <td>
-              <Link to={`/users/${user.id}`}>
+                <Link to={`/users/${user.telegramUsername}`}>
                   <button>{user.telegramUsername}</button>
                 </Link>
               </td>
