@@ -31,7 +31,7 @@ func (a *App) Run() error {
 	a.ServerEcho.Use(middleware.Logger())
 	a.ServerEcho.Use(middleware.Recover())
 	a.ServerEcho.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://172.19.0.3:80"}, // Разрешить запросы с этого источника
+		AllowOrigins: []string{"http://localhost:3000"}, // Разрешить запросы с этого источника
 		AllowMethods: []string{echo.GET, echo.POST, echo.PUT, echo.DELETE},
 	}))
 	if err := a.ServerEcho.Start(":8080"); err != http.ErrServerClosed {

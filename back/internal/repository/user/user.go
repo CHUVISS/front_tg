@@ -18,7 +18,7 @@ func Confirm(userId uint, urlChannel string, db *gorm.DB) error {
 	}
 
 	currentTime := time.Now().In(location)
-	result := db.Model(&channels.ChannelsRepo{}).
+	result := db.Table("channel").
 		Where("user_id = ? AND url = ?", userId, urlChannel).
 		Updates(map[string]interface{}{
 			"confirmed":         true,
@@ -33,7 +33,7 @@ func Confirm(userId uint, urlChannel string, db *gorm.DB) error {
 }
 
 func UpdateBalance(id uint, value int64, db *gorm.DB) error {
-	result := db.Model(&UserRepo{}).Where("id = ?", id).Update("views_balance", gorm.Expr("views_balance + ?", value))
+	result := db.Table("user").Where("id = ?", id).Update("views_balance", gorm.Expr("views_balance + ?", value))
 	if result.Error != nil {
 		return result.Error
 	}
@@ -75,6 +75,28 @@ func Get(username string, db *gorm.DB) model.UserInfo {
 
 }
 
+func GetAllChannelsAdd(db *gorm.DB) []model.ChannelsAdd {
+	var AllNote = make([]channels.ChannelsRepo, 0)
+	result := db.Where("confirmed IS NULL").Find(&AllNote)
+	vsm := make([]model.ChannelsAdd, len(AllNote))
+	if result.Error != nil {
+		fmt.Println(result.Error.Error())
+	}
+	for i, v := range AllNote {
+		name, err := GetUsernameFromId(uint(v.UserId), db)
+		if err != nil {
+			panic(err)
+		}
+
+		vsm[i] = model.ChannelsAdd{
+			Url:         v.Url,
+			Username:    name,
+			TypeChannel: v.ChannelType,
+		}
+	}
+	return vsm
+}
+
 func GetAll(db *gorm.DB) []model.UserInfo {
 	var AllNote = make([]UserRepo, 0)
 	result := db.Find(&AllNote)
@@ -87,7 +109,7 @@ func GetAll(db *gorm.DB) []model.UserInfo {
 
 func CountReferrals(telegramId int64, db *gorm.DB) int64 {
 	var count int64
-	result := db.Model(&UserRepo{}).Where("referral_first_level_id = ?", telegramId).Count(&count)
+	result := db.Table("user").Where("referral_first_level_id = ?", telegramId).Count(&count)
 
 	if result.Error != nil {
 		fmt.Println("Ошибка:", result.Error)
@@ -112,6 +134,16 @@ func GetTelegramIdFromUsername(username string, db *gorm.DB) (int64, error) {
 	}
 
 	return u.TelegramId, nil
+}
+
+func GetUsernameFromId(id uint, db *gorm.DB) (string, error) {
+	var u UserRepo
+	result := db.Where("id = ?", id).First(&u)
+	if result.Error != nil {
+		return "", result.Error
+	}
+
+	return u.Username, nil
 }
 
 func GetIdFromUsername(username string, db *gorm.DB) (uint, error) {

@@ -20,7 +20,7 @@ func GetAll(db *gorm.DB) []model.WithdrawInfo {
 
 func GetTotalAmount(db *gorm.DB) int64 {
 	var totalAmount int64
-	db.Model(&WithdrawRepo{}).Select("SUM(amount)").Scan(&totalAmount)
+	db.Table("withdraw").Select("SUM(amount)").Scan(&totalAmount)
 	return totalAmount
 }
 
@@ -32,7 +32,7 @@ func Confirm(userId uint, db *gorm.DB) error {
 	}
 	var amount int64
 	currentTime := time.Now().In(location)
-	result := db.Model(&WithdrawRepo{}).
+	result := db.Table("withdraw").
 		Where("user_id = ?", userId).
 		Updates(map[string]interface{}{
 			"confirmed":          true,
@@ -59,7 +59,7 @@ func Cancel(userId uint, db *gorm.DB) error {
 	}
 	var amount int64
 	currentTime := time.Now().In(location)
-	result := db.Model(&WithdrawRepo{}).
+	result := db.Table("withdraw").
 		Where("user_id = ?", userId).
 		Updates(map[string]interface{}{
 			"confirmed":          false,

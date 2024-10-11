@@ -1,31 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from '../styles/AddChannels.module.css'; // CSS для стилизации
 
 const AddChannels = () => {
-  const [channels, setChannels] = useState([
-    {
-      id: 1,
-      username: 'user2',
-      socialNetwork: 'YouTube',
-      link: 'youtube.com',
-    },
-    {
-      id: 2,
-      username: 'user1',
-      socialNetwork: 'Instagram',
-      link: 'https://www.instagram.com/user2',
-    },
-    {
-      id: 3,
-      username: '@user3',
-      socialNetwork: 'TikTok',
-      link: 'https://www.tiktok.com/@user3',
-    },
-  ]);
-
+  const [channels, setChannels] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [actionType, setActionType] = useState(''); // Принять или Отклонить
   const [selectedChannel, setSelectedChannel] = useState(null);
+
+  // Функция для получения данных с бэкенда
+  useEffect(() => {
+    const fetchChannels = async () => {
+      const token = localStorage.getItem('jwtToken'); // Получаем токен из localStorage
+      try {
+        const response = await fetch('http://172.19.0.3:8080/users/getAddChannels',{
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`, // Добавляем токен в заголовки
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          
+          // Преобразуем данные от бэкенда в нужный формат
+          const formattedData = data.map((channel, index) => ({
+            id: index + 1,
+            username: channel.Username,
+            socialNetwork: channel.TypeChannel.charAt(0).toUpperCase() + channel.TypeChannel.slice(1), // Преобразуем, например, 'tiktok' -> 'TikTok'
+            link: channel.Url, // Добавляем https, если не указано
+          }));
+
+          setChannels(formattedData);
+        } else {
+          console.error('Ошибка при получении каналов с бэкенда');
+        }
+      } catch (error) {
+        console.error('Ошибка при выполнении запроса:', error);
+      }
+    };
+
+    fetchChannels();
+  }, []);
 
   const openModal = (channel, action) => {
     setSelectedChannel(channel);
@@ -41,7 +56,6 @@ const AddChannels = () => {
   const handleDecline = async () => {
     const channelId = selectedChannel.id;
     closeModal();
-    // Удаляем канал из списка
     setChannels((prevChannels) => prevChannels.filter((channel) => channel.id !== channelId));
   };
 
@@ -66,8 +80,7 @@ const AddChannels = () => {
       });
 
       if (response.ok) {
-        setChannels(channels.filter((channel) => channel.id !== channelId));
-        // Убрали alert
+        setChannels((prevChannels) => prevChannels.filter((channel) => channel.id !== channelId));
       } else {
         console.error('Ошибка при принятии канала.');
       }
@@ -128,7 +141,7 @@ const AddChannels = () => {
       {isModalOpen && (
         <div className={styles.modal}>
           <div className={styles.modalContent}>
-          <h2>Подтверждение действия</h2>
+            <h2>Подтверждение действия</h2>
             <p>
               Вы уверены, что хотите {actionType === 'accept' ? 'принять' : 'отклонить'} {selectedChannel.username}?
             </p>

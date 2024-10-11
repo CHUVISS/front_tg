@@ -18,6 +18,8 @@ definitions:
         type: integer
       countViews:
         type: integer
+      countWeekViews:
+        type: integer
       url:
         type: string
     type: object
@@ -285,6 +287,35 @@ paths:
       security:
       - BearerAuth: []
       summary: Confirm a user channel
+      tags:
+      - users
+  /users/getAddChannels:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves information about a user based on the provided username
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User information
+          schema:
+            $ref: '#/definitions/model.UserInfo'
+        "400":
+          description: Invalid username
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: User not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get user information
       tags:
       - users
   /users/views:

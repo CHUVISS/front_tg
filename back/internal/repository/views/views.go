@@ -8,7 +8,7 @@ import (
 
 func GetCountViews(channelId uint, db *gorm.DB) int64 {
 	var totalAmount int64
-	db.Model(&ViewsRepo{}).
+	db.Table("views").
 		Where("channel_id = ?", channelId).
 		Select("SUM(views_count)").
 		Scan(&totalAmount)
@@ -20,7 +20,7 @@ func GetCountViewsDay(db *gorm.DB) (int64, error) {
 	startOfDay := time.Now().Truncate(24 * time.Hour)
 	endOfDay := startOfDay.Add(24 * time.Hour)
 
-	err := db.Model(&ViewsRepo{}).
+	err := db.Table("views").
 		Where("update_date >= ? AND update_date < ?", startOfDay, endOfDay).
 		Select("SUM(views_count)").Scan(&total).Error
 
@@ -32,7 +32,7 @@ func GetCountViewsWeek(db *gorm.DB) (int64, error) {
 	oneWeekAgo := time.Now().AddDate(0, 0, -7)
 	now := time.Now()
 
-	result := db.Model(ViewsRepo{}).
+	result := db.Table("views").
 		Where("update_date >= ? AND update_date <= ?", oneWeekAgo, now).
 		Select("SUM(views_count)").
 		Scan(&totalViews)
@@ -50,7 +50,7 @@ func GetChannelCountViewsWeek(channelId uint, db *gorm.DB) (*int64, error) {
 	oneWeekAgo := time.Now().AddDate(0, 0, -7)
 	now := time.Now()
 
-	result := db.Model(ViewsRepo{}).
+	result := db.Table("views").
 		Where("update_date >= ? AND update_date <= ?", oneWeekAgo, now).
 		Select("SUM(views_count)").
 		Scan(&totalViews)
@@ -68,7 +68,7 @@ func GetChannelCountViewsDay(channelId uint, db *gorm.DB) (*int64, error) {
 	startOfDay := time.Now().Truncate(24 * time.Hour)
 	endOfDay := startOfDay.Add(24 * time.Hour)
 
-	err := db.Model(&ViewsRepo{}).
+	err := db.Table("views").
 		Where("update_date >= ? AND update_date < ? AND channel_id = ?", startOfDay, endOfDay, channelId).
 		Select("SUM(views_count)").Scan(&total).Error
 
@@ -83,7 +83,7 @@ func GetChannelCountViewsMonth(channelId uint, db *gorm.DB) (*int64, error) {
 	start := time.Date(now.Year(), now.Month()-1, 1, 0, 0, 0, 0, now.Location())
 	end := start.AddDate(0, 1, 0)
 
-	err := db.Model(&ViewsRepo{}).
+	err := db.Table("views").
 		Where("update_date >= ? AND update_date < ? AND channel_id = ?", start, end, channelId).
 		Select("SUM(views_count)").
 		Scan(&total).Error
@@ -103,7 +103,7 @@ func GetCountViewsMonth(db *gorm.DB) (int64, error) {
 	start := time.Date(now.Year(), now.Month()-1, 1, 0, 0, 0, 0, now.Location())
 	end := start.AddDate(0, 1, 0)
 
-	err := db.Model(&ViewsRepo{}).
+	err := db.Table("views").
 		Where("update_date >= ? AND update_date < ?", start, end).
 		Select("SUM(views_count)").
 		Scan(&total).Error

@@ -48,7 +48,7 @@ func JWTMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 }
 
 func GenerateJWT(username string) string {
-	expirationTime := time.Now().Add(60 * time.Minute)
+	expirationTime := time.Now().Add(72 * time.Hour)
 	claims := &Claims{
 		Username: username,
 		StandardClaims: jwt.StandardClaims{

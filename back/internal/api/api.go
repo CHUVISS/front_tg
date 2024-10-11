@@ -22,6 +22,7 @@ func RouteController(a *app.App) {
 
 	//channel
 	a.ServerEcho.GET("/channels/all", handler.GetAllViewsTypeAndWithdraw, service.JWTMiddleware)
+	a.ServerEcho.GET("/users/getAddChannels", handler.GetChannels, service.JWTMiddleware)
 
 	//withdraw
 	a.ServerEcho.GET("/withdraw/all", handler.GetAllWithdraw, service.JWTMiddleware)

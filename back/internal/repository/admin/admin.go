@@ -8,7 +8,7 @@ import (
 
 func Auth(name string, password string, db *gorm.DB) error {
 	var fromDB AdminRepo
-	res := db.Model(AdminRepo{}).First(&fromDB)
+	res := db.Table("admin").First(&fromDB)
 	if res.Error != nil {
 		panic(res.Error)
 	}

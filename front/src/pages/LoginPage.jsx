@@ -24,18 +24,19 @@ const LoginPage = () => {
       const data = await response.json();
       console.log('Данные пользователя:', data);
 
-      // Сохраняем JWT токен в localStorage
-      if (data.message) {
-        localStorage.setItem('jwtToken', data.message);
-        console.log('JWT токен сохранен в localStorage');
-      } else {
-        console.error('Токен не найден в ответе');
-      }
+       // Проверяем, что message похож на JWT токен
+       const isJwtToken = data.message && /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/.test(data.message);
+
+       if (isJwtToken) {
+         localStorage.setItem('jwtToken', data.message);
+         console.log('JWT токен сохранен в localStorage');
+       } else {
+         console.error('JWT токен не найден в ответе или токен некорректный');
+       }
 
       if (response.ok) {
         alert('Вход выполнен успешно');
         // Логика перенаправления пользователя после успешного входа
-        // Например, можно перенаправить на страницу с каналами
         window.location.href = '/channels'; 
       } else {
         setErrorMessage(data.message || 'Ошибка входа');

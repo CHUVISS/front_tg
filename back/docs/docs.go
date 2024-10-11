@@ -347,6 +347,52 @@ const docTemplate = `{
                 }
             }
         },
+        "/users/getAddChannels": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves information about a user based on the provided username",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get user information",
+                "responses": {
+                    "200": {
+                        "description": "User information",
+                        "schema": {
+                            "$ref": "#/definitions/model.UserInfo"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid username",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/users/views": {
             "get": {
                 "security": [
@@ -588,6 +634,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "countViews": {
+                    "type": "integer"
+                },
+                "countWeekViews": {
                     "type": "integer"
                 },
                 "url": {

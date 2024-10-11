@@ -10,7 +10,7 @@ import (
 
 func CountChannels(userId uint, db *gorm.DB) int64 {
 	var count int64
-	result := db.Model(&ChannelsRepo{}).Where("user_id = ? AND confirmed = ?", userId, true).Count(&count)
+	result := db.Table("channel").Where("user_id = ? AND confirmed = ?", userId, true).Count(&count)
 
 	if result.Error != nil {
 		fmt.Println("Ошибка:", result.Error)
@@ -21,7 +21,7 @@ func CountChannels(userId uint, db *gorm.DB) int64 {
 
 func GetAllUserChannelsId(userId uint, db *gorm.DB) []uint {
 	var ids []uint
-	result := db.Model(&ChannelsRepo{}).Where("user_id = ? and confirmed = ?", userId, true).Pluck("id", &ids)
+	result := db.Table("channel").Where("user_id = ? and confirmed = ?", userId, true).Pluck("id", &ids)
 
 	if result.Error != nil {
 		fmt.Println("Ошибка:", result.Error)
@@ -31,7 +31,7 @@ func GetAllUserChannelsId(userId uint, db *gorm.DB) []uint {
 
 func GetAllTypeChannelsId(channelType string, db *gorm.DB) []uint {
 	var ids []uint
-	result := db.Model(&ChannelsRepo{}).Where("channel_type = ?", channelType).Pluck("id", &ids)
+	result := db.Table("channel").Where("channel_type = ?", channelType).Pluck("id", &ids)
 
 	if result.Error != nil {
 		fmt.Println("Ошибка:", result.Error)
@@ -49,7 +49,7 @@ func CountViewsTypeChannels(ids []uint, db *gorm.DB) int64 {
 
 func GetLink(id uint, typeChannel string, db *gorm.DB) string {
 	var link string
-	result := db.Model(ChannelsRepo{}).
+	result := db.Table("channel").
 		Where("id = ? AND channel_type = ?", id, typeChannel).
 		Select("url").Scan(&link)
 	if result.Error != nil {
@@ -60,7 +60,7 @@ func GetLink(id uint, typeChannel string, db *gorm.DB) string {
 
 func GetChannelType(id uint, db *gorm.DB) string {
 	var typeChannel string
-	result := db.Model(ChannelsRepo{}).
+	result := db.Table("channel").
 		Where("id = ?", id).
 		Select("channel_type").Scan(&typeChannel)
 	if result.Error != nil {

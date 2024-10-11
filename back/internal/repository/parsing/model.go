@@ -1,5 +1,9 @@
 package parsing
 
+func (RequestedChannel) TableName() string {
+	return "RequestedChannel"
+}
+
 type RequestedChannel struct {
 	ID          uint   `gorm:"primaryKey"`
 	Url         string `gorm:"type:varchar(512)"`

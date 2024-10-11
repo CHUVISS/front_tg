@@ -7,3 +7,9 @@ type ChannelsInfo struct {
 	CountMonthViews *int64
 	CountWeekViews  *int64
 }
+
+type ChannelsAdd struct {
+	Url         string
+	Username    string
+	TypeChannel string
+}
