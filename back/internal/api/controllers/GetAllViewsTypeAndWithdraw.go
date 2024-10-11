@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"myapp/internal/repository/channels"
+	"myapp/internal/repository/views"
 	"myapp/internal/repository/withdraw"
 	"net/http"
 
@@ -27,6 +28,21 @@ func (h *Handler) GetAllViewsTypeAndWithdraw(c echo.Context) error {
 		view[v] = count
 		sum += count
 	}
+	viewDay, err := views.GetCountViewsDay(h.repository)
+	if err != nil {
+		panic(err)
+	}
+	viewMonth, err := views.GetCountViewsMonth(h.repository)
+	if err != nil {
+		panic(err)
+	}
+	viewWeek, err := views.GetCountViewsWeek(h.repository)
+	if err != nil {
+		panic(err)
+	}
+	view["week_views"] = viewWeek
+	view["day_views"] = viewDay
+	view["month_views"] = viewMonth
 	view["total_views"] = sum
 	view["total_withdraw"] = withdraw.GetTotalAmount(h.repository)
 

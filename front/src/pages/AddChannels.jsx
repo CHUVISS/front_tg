@@ -5,13 +5,13 @@ const AddChannels = () => {
   const [channels, setChannels] = useState([
     {
       id: 1,
-      username: 'user1',
+      username: 'user2',
       socialNetwork: 'YouTube',
       link: 'youtube.com',
     },
     {
       id: 2,
-      username: '@user2',
+      username: 'user1',
       socialNetwork: 'Instagram',
       link: 'https://www.instagram.com/user2',
     },
@@ -47,7 +47,7 @@ const AddChannels = () => {
 
   const handleAccept = async () => {
     const channelId = selectedChannel.id;
-    const username = selectedChannel.username;
+    const usernameTg = selectedChannel.username;
     const linkSocial = selectedChannel.link;
     const token = localStorage.getItem('jwtToken');
     closeModal();
@@ -61,7 +61,7 @@ const AddChannels = () => {
         },
         body: JSON.stringify({
           url_channel: linkSocial,
-          usernameTg: username, 
+          username: usernameTg, 
         }),
       });
 

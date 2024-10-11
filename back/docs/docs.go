@@ -161,6 +161,55 @@ const docTemplate = `{
                 }
             }
         },
+        "/parsing/del/{channelType}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Удаляет все записи, где isParsed=true и channel_type соответствует переданному параметру.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "parsing"
+                ],
+                "summary": "Удаление записей по типу канала",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Тип канала",
+                        "name": "channelType",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/users": {
             "get": {
                 "security": [
@@ -358,6 +407,11 @@ const docTemplate = `{
         },
         "/withdraw/all": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Retrieves a list of all withdraw notes from the repository",
                 "consumes": [
                     "application/json"
@@ -527,6 +581,12 @@ const docTemplate = `{
         "model.ChannelsInfo": {
             "type": "object",
             "properties": {
+                "countDayViews": {
+                    "type": "integer"
+                },
+                "countMonthViews": {
+                    "type": "integer"
+                },
                 "countViews": {
                     "type": "integer"
                 },

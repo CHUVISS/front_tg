@@ -24,7 +24,6 @@ const UserPage = () => {
       const data = await response.json();
       
       // Логируем формат данных, которые приходят с бэкенда
-      console.log('Данные пользователя:', data);
 
       const response2 = await fetch(`http://172.19.0.3:8080/users/views?username=${username}`, {
         method: 'GET',
@@ -39,7 +38,6 @@ const UserPage = () => {
       const data2 = await response2.json();
       
       // Логируем формат данных, которые приходят с бэкенда
-      console.log('Данные просмотров:', data2);
 
       // Преобразование данных для удобства работы
       const transformedUser = {
@@ -53,8 +51,8 @@ const UserPage = () => {
           platform: platform.charAt(0).toUpperCase() + platform.slice(1), // Форматируем имя платформы (например, "youtube" в "YouTube")
           link: data2[platform].Url, // Получаем ссылку на канал из data2
           viewsTotal: data2[platform].CountViews, // Получаем общее количество просмотров из data2
-          viewsWeek: 0, // Устанавливаем значения для просмотров за неделю и день (пока 0)
-          viewsDay: 0,
+          viewsWeek: data2[platform].CountWeekViews, // Устанавливаем значения для просмотров за неделю и день (пока 0)
+          viewsDay: data2[platform].CountDayViews,
         }))
       };
 

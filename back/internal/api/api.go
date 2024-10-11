@@ -30,6 +30,7 @@ func RouteController(a *app.App) {
 
 	//parsing
 	a.ServerEcho.POST("/parsing/add", handler.ParsingAdd, service.JWTMiddleware)
+	a.ServerEcho.DELETE("/parsing/del/:channelType", handler.ParsingDelet, service.JWTMiddleware)
 
 	a.ServerEcho.GET("/swagger/*", echoSwagger.WrapHandler)
 }

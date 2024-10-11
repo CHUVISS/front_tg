@@ -11,7 +11,7 @@ import (
 
 func GetAll(db *gorm.DB) []model.WithdrawInfo {
 	allNote := make([]WithdrawRepo, 0)
-	result := db.Find(&allNote)
+	result := db.Where("confirmed IS NULL").Find(&allNote)
 	if result.Error != nil {
 		panic(result.Error.Error())
 	}

@@ -73,7 +73,7 @@ func GetAllUserChannels(userId uint, db *gorm.DB) map[string]model.ChannelsInfo 
 	channel := make(map[string]model.ChannelsInfo)
 
 	channelsId := GetAllUserChannelsId(userId, db)
-
+	var err error
 	for _, v := range channelsId {
 		channelType := GetChannelType(v, db)
 
@@ -84,6 +84,18 @@ func GetAllUserChannels(userId uint, db *gorm.DB) map[string]model.ChannelsInfo 
 		channelsInfo := channel[channelType]
 		channelsInfo.CountViews = views.GetCountViews(v, db)
 		channelsInfo.Url = GetLink(v, channelType, db)
+		channelsInfo.CountDayViews, err = views.GetChannelCountViewsDay(v, db)
+		if err != nil {
+			panic(err)
+		}
+		channelsInfo.CountMonthViews, err = views.GetChannelCountViewsMonth(v, db)
+		if err != nil {
+			panic(err)
+		}
+		channelsInfo.CountWeekViews, err = views.GetChannelCountViewsWeek(v, db)
+		if err != nil {
+			panic(err)
+		}
 
 		channel[channelType] = channelsInfo
 	}

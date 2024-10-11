@@ -44,7 +44,7 @@ func InitDB(config config.Config) *gorm.DB {
 	if err != nil {
 		panic(err)
 	}
-	err = db.AutoMigrate(&parsing.ParsRepo{})
+	err = db.AutoMigrate(&parsing.RequestedChannel{})
 	if err != nil {
 		panic(err)
 	}

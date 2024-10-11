@@ -28,9 +28,9 @@ const Analytics = () => {
         { name: 'TikTok', value: data.tiktok || '0' },
         { name: 'Facebook', value: data.facebook || '0' },
         { name: 'Instagram', value: data.instagram || '0' },
-        { name: 'Всего просмотров день', value: data.viewsToday || '0' },
-        { name: 'Всего просмотров неделя', value: data.viewsWeek || '0' },
-        { name: 'Всего просмотров месяц', value: data.viewsMonth || '0' },
+        { name: 'Всего просмотров день', value: data.day_views || '0' },
+        { name: 'Всего просмотров неделя', value: data.week_views || '0' },
+        { name: 'Всего просмотров месяц', value: data.month_views || '0' },
         { name: 'Всего просмотров', value: data.total_views || '0' },
         { name: 'На выплату', value: data.total_withdraw || '0' },
       ];

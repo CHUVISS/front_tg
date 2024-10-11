@@ -12,6 +12,10 @@ definitions:
     type: object
   model.ChannelsInfo:
     properties:
+      countDayViews:
+        type: integer
+      countMonthViews:
+        type: integer
       countViews:
         type: integer
       url:
@@ -165,6 +169,38 @@ paths:
       summary: Add parsing information
       tags:
       - parsing
+  /parsing/del/{channelType}:
+    delete:
+      consumes:
+      - application/json
+      description: Удаляет все записи, где isParsed=true и channel_type соответствует
+        переданному параметру.
+      parameters:
+      - description: Тип канала
+        in: path
+        name: channelType
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Удаление записей по типу канала
+      tags:
+      - parsing
   /users:
     get:
       consumes:
@@ -309,6 +345,8 @@ paths:
             additionalProperties:
               type: string
             type: object
+      security:
+      - BearerAuth: []
       summary: Get all withdraw notes
       tags:
       - withdraw
