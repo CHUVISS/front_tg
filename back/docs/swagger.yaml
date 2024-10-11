@@ -1,0 +1,381 @@
+basePath: /
+definitions:
+  model.Auth:
+    properties:
+      name:
+        type: string
+      password:
+        type: string
+    required:
+    - name
+    - password
+    type: object
+  model.ChannelsInfo:
+    properties:
+      countViews:
+        type: integer
+      url:
+        type: string
+    type: object
+  model.ParsInfo:
+    properties:
+      type_channel:
+        type: string
+      url:
+        type: string
+    required:
+    - type_channel
+    - url
+    type: object
+  model.UserConfirm:
+    properties:
+      url_channel:
+        type: string
+      username:
+        type: string
+    required:
+    - url_channel
+    - username
+    type: object
+  model.UserInfo:
+    properties:
+      balance:
+        type: integer
+      channels:
+        type: integer
+      countViews:
+        type: integer
+      referrals:
+        type: integer
+      username:
+        type: string
+      wallet:
+        type: string
+    type: object
+  model.WithdrawInfo:
+    properties:
+      amount:
+        type: integer
+      confirmed:
+        type: boolean
+      username:
+        type: string
+      wallet:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server Echo server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Echo API
+  version: "1.0"
+paths:
+  /auth:
+    post:
+      consumes:
+      - application/json
+      description: Проверка авторизации пользователя по имени и паролю
+      parameters:
+      - description: Данные авторизации
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/model.Auth'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешная авторизация
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Некорректное имя или пароль, или ошибка ввода
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Авторизация пользователя
+      tags:
+      - auth
+  /channels/all:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves the total views for different types of channels (YouTube,
+        TikTok, Instagram, Facebook)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Map of channel types and their total views
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get total views by channel type
+      tags:
+      - channels
+  /parsing/add:
+    post:
+      consumes:
+      - application/json
+      description: Adds parsing information to the repository
+      parameters:
+      - description: Parsing Information
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.ParsInfo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success message
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid input or incorrect name/password
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Add parsing information
+      tags:
+      - parsing
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves information about a user based on the provided username
+      parameters:
+      - description: Username of the user
+        in: query
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User information
+          schema:
+            $ref: '#/definitions/model.UserInfo'
+        "400":
+          description: Invalid username
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: User not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get user information
+      tags:
+      - users
+  /users/all:
+    get:
+      consumes:
+      - application/json
+      description: Получение списка всех пользователей.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список пользователей
+          schema:
+            items:
+              $ref: '#/definitions/model.UserInfo'
+            type: array
+      summary: Get all users
+      tags:
+      - users
+  /users/confirm:
+    post:
+      consumes:
+      - application/json
+      description: Confirms the user's channel by username and channel URL
+      parameters:
+      - description: User confirmation data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserConfirm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: confirmed
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid input or incorrect url/username
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Confirm a user channel
+      tags:
+      - users
+  /users/views:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves the list of channels and their views for a specific user
+        based on the provided username
+      parameters:
+      - description: Username of the user
+        in: query
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of channels with their views
+          schema:
+            items:
+              $ref: '#/definitions/model.ChannelsInfo'
+            type: array
+        "400":
+          description: Invalid username
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: User not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get views for user channels
+      tags:
+      - users
+  /withdraw/all:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a list of all withdraw notes from the repository
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of all withdraw notes
+          schema:
+            items:
+              $ref: '#/definitions/model.WithdrawInfo'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all withdraw notes
+      tags:
+      - withdraw
+  /withdraw/cancel:
+    post:
+      consumes:
+      - application/json
+      description: Confirms a withdrawal for a specific user based on the provided
+        username
+      parameters:
+      - description: Username of the user whose withdrawal is being confirmed
+        in: query
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Confirmation message
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid username
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Confirm a withdrawal
+      tags:
+      - withdraw
+  /withdraw/confirm:
+    post:
+      consumes:
+      - application/json
+      description: Confirms a withdrawal for a specific user based on the provided
+        username
+      parameters:
+      - description: Username of the user whose withdrawal is being confirmed
+        in: query
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Confirmation message
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid username
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Confirm a withdrawal
+      tags:
+      - withdraw
+securityDefinitions:
+  BearerAuth:
+    description: 'Введите JWT токен следующим образом: "Bearer {токен}"'
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
