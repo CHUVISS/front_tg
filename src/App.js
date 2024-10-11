@@ -14,8 +14,12 @@ import UserPage from './pages/UserPage';
 const App = () => {
   return (
     <Router>
+      <div style={{display: 'flex'}}>
+        <Routes>
+          < Route path="/" element={<LoginPage/>} />
+        </Routes>
+      </div>
       <div style={{ display: 'flex' }}>
-        <LoginPage />
         <Sidebar />
         <div style={{ flex: 1, padding: '20px' }}>
           <Routes>

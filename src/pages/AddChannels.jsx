@@ -23,67 +23,85 @@ const AddChannels = () => {
     },
   ]);
 
-  const handleDecline = async (channelId, username) => {
-    const isConfirmed = window.confirm(`Вы уверены, что хотите отклонить ${username}?`);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [actionType, setActionType] = useState(''); // Принять или Отклонить
+  const [selectedChannel, setSelectedChannel] = useState(null);
 
-    if (isConfirmed) {
-      try {
-        // Пример запроса удаления через POST
-        const response = await fetch(`/api/channels/delete`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ id: channelId }),
-        });
+  const openModal = (channel, action) => {
+    setSelectedChannel(channel);
+    setActionType(action);
+    setIsModalOpen(true);
+  };
 
-        if (response.ok) {
-          setChannels(channels.filter((channel) => channel.id !== channelId));
-          alert(`${username} был удалён из базы данных.`);
-        } else {
-          alert('Ошибка при удалении канала. Проверьте сервер.');
-        }
-      } catch (error) {
-        console.error('Ошибка при удалении канала:', error);
-        alert('Произошла ошибка при попытке удаления.');
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedChannel(null);
+  };
+
+  const handleDecline = async () => {
+    const channelId = selectedChannel.id;
+    closeModal();
+
+    try {
+      const response = await fetch(`/api/channels/delete`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: channelId }),
+      });
+
+      if (response.ok) {
+        setChannels(channels.filter((channel) => channel.id !== channelId));
+        // Убрали alert
+      } else {
+        console.error('Ошибка при удалении канала.');
       }
+    } catch (error) {
+      console.error('Ошибка при удалении канала:', error);
     }
   };
 
-  const handleAccept = async (channelId, username, linkSocial, socialNetwork) => {
-    const isConfirmed = window.confirm(`Вы уверены, что хотите принять ${username}?`);
-  
-    if (isConfirmed) {
-      try {
-        // Пример запроса для принятия канала через POST
-        const response = await fetch(`http://localhost:8080/users/add`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            social_link: linkSocial,       // Пример: "https://social.com/user"
-            tgId: username,                // Пример: "user123"
-            wallet: "TRC20",               // Пример: "TRC20"
-            social_name: socialNetwork,    // Пример: "Instagram"
-            count_views: 0                 // Пример: 0
-          }),
-        });
-  
-        if (response.ok) {
-          // Логика обновления состояния после принятия (например, убираем канал из списка)
-          setChannels(channels.filter((channel) => channel.id !== channelId));
-          alert(`${username} был принят.`);
-        } else {
-          alert('Ошибка при принятии канала. Проверьте сервер.');
-        }
-      } catch (error) {
-        console.error('Ошибка при принятии канала:', error);
-        alert('Произошла ошибка при попытке принятия.');
+  const handleAccept = async () => {
+    const channelId = selectedChannel.id;
+    const username = selectedChannel.username;
+    const linkSocial = selectedChannel.link;
+    const socialNetwork = selectedChannel.socialNetwork;
+    closeModal();
+
+    try {
+      const response = await fetch(`http://localhost:8080/users/add`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          social_link: linkSocial,
+          tgId: username,
+          wallet: 'TRC20',
+          social_name: socialNetwork,
+          count_views: 0,
+        }),
+      });
+
+      if (response.ok) {
+        setChannels(channels.filter((channel) => channel.id !== channelId));
+        // Убрали alert
+      } else {
+        console.error('Ошибка при принятии канала.');
       }
+    } catch (error) {
+      console.error('Ошибка при принятии канала:', error);
     }
   };
-  
+
+  const confirmAction = () => {
+    if (actionType === 'accept') {
+      handleAccept();
+    } else if (actionType === 'decline') {
+      handleDecline();
+    }
+  };
 
   return (
     <div className={styles.channelsContainer}>
@@ -94,8 +112,7 @@ const AddChannels = () => {
             <th>Телеграм</th>
             <th>Соц. сеть</th>
             <th>Ссылка</th>
-            <th>Отклонить</th>
-            <th>Принять</th>
+            <th>Принять/Отклонить</th>
           </tr>
         </thead>
         <tbody>
@@ -110,24 +127,35 @@ const AddChannels = () => {
               </td>
               <td>
                 <button
-                  className={styles.declineButton}
-                  onClick={() => handleDecline(channel.id, channel.username)}
-                >
-                  Отклонить
-                </button>
-              </td>
-              <td>
-                <button
                   className={styles.acceptButton}
-                  onClick={() => handleAccept(channel.id, channel.username, channel.link, channel.socialNetwork)}
+                  onClick={() => openModal(channel, 'accept')}
                 >
                   Принять
+                </button>
+                <button
+                  className={styles.declineButton}
+                  onClick={() => openModal(channel, 'decline')}
+                >
+                  Отклонить
                 </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      {isModalOpen && (
+        <div className={styles.modal}>
+          <div className={styles.modalContent}>
+          <h2>Подтверждение действия</h2>
+            <p>
+              Вы уверены, что хотите {actionType === 'accept' ? 'принять' : 'отклонить'} {selectedChannel.username}?
+            </p>
+            <button className={styles.acceptButton} onClick={confirmAction}>Подтвердить</button>
+            <button className={styles.declineButton} onClick={closeModal}>Отменить</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

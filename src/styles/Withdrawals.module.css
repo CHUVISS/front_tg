@@ -21,7 +21,7 @@
     background-color: #808080; /* Темно-серый фон */
     color: white;
     border: none;
-    padding: 10px;
+    margin: 5px;
     cursor: pointer;
   }
   
@@ -29,3 +29,43 @@
     background-color: #6e6e6e; /* Светлее при наведении */
   }
   
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+  }
+  
+  .modalContent {
+    background: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+  }
+  
+  .modalActions {
+    margin-top: 20px;
+  }
+
+  .acceptButton {
+    background-color: green;
+    color: white;
+  }
+  
+  .acceptButton:hover {
+    background-color: #45a049; /* Более светлый зеленый при наведении */
+  }
+  
+  .declineButton {
+    background-color: red;
+    color: white;
+  }
+  
+  .declineButton:hover {
+    background-color: #d63031; /* Более светлый красный при наведении */
+  }
