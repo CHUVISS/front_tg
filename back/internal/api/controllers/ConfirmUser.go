@@ -18,6 +18,7 @@ import (
 // @Success 200 {object} map[string]string "confirmed"
 // @Failure 400 {object} map[string]string "Invalid input or incorrect url/username"
 // @Router /users/confirm [post]
+// @Security     BearerAuth
 func (h *Handler) ConfirmUser(c echo.Context) error {
 	u := new(model.UserConfirm)
 	if err := c.Bind(u); err != nil {

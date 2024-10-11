@@ -18,6 +18,7 @@ import (
 // @Failure 400 {object} map[string]string "Invalid username"
 // @Failure 404 {object} map[string]string "User not found"
 // @Router /users [get]
+// @Security     BearerAuth
 func (h *Handler) GetUser(c echo.Context) error {
 	username := c.QueryParam("username")
 	u := user.Get(username, h.repository)

@@ -18,6 +18,7 @@ import (
 // @Success 200 {object} map[string]string "Success message"
 // @Failure 400 {object} map[string]string "Invalid input or incorrect name/password"
 // @Router /parsing/add [post]
+// @Security     BearerAuth
 func (h *Handler) ParsingAdd(c echo.Context) error {
 	u := new(model.ParsInfo)
 	if err := c.Bind(u); err != nil {

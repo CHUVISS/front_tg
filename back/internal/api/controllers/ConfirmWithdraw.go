@@ -19,6 +19,7 @@ import (
 // @Failure 400 {object} map[string]string "Invalid username"
 // @Failure 500 {object} map[string]string "Internal server error"
 // @Router /withdraw/confirm [post]
+// @Security     BearerAuth
 func (h *Handler) ConfirmWithdraw(c echo.Context) error {
 	username := c.QueryParam("username")
 	id, err := user.GetIdFromUsername(username, h.repository)

@@ -3,6 +3,7 @@ package controllers
 import (
 	"myapp/internal/model"
 	"myapp/internal/repository/admin"
+	"myapp/service"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -27,5 +28,6 @@ func (h *Handler) Authorization(c echo.Context) error {
 	if res != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"message": "incorrect name or password"})
 	}
-	return c.JSON(http.StatusOK, map[string]string{"message": "success"})
+	token := service.GenerateJWT(u.Name)
+	return c.JSON(http.StatusOK, map[string]string{"message": token})
 }

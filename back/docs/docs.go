@@ -72,6 +72,11 @@ const docTemplate = `{
         },
         "/channels/all": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Retrieves the total views for different types of channels (YouTube, TikTok, Instagram, Facebook)",
                 "consumes": [
                     "application/json"
@@ -107,6 +112,11 @@ const docTemplate = `{
         },
         "/parsing/add": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Adds parsing information to the repository",
                 "consumes": [
                     "application/json"
@@ -153,6 +163,11 @@ const docTemplate = `{
         },
         "/users": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Retrieves information about a user based on the provided username",
                 "consumes": [
                     "application/json"
@@ -203,6 +218,11 @@ const docTemplate = `{
         },
         "/users/all": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Получение списка всех пользователей.",
                 "consumes": [
                     "application/json"
@@ -229,6 +249,11 @@ const docTemplate = `{
         },
         "/users/confirm": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Confirms the user's channel by username and channel URL",
                 "consumes": [
                     "application/json"
@@ -275,6 +300,11 @@ const docTemplate = `{
         },
         "/users/views": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Retrieves the list of channels and their views for a specific user based on the provided username",
                 "consumes": [
                     "application/json"
@@ -363,6 +393,11 @@ const docTemplate = `{
         },
         "/withdraw/cancel": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Confirms a withdrawal for a specific user based on the provided username",
                 "consumes": [
                     "application/json"
@@ -416,6 +451,11 @@ const docTemplate = `{
         },
         "/withdraw/confirm": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Confirms a withdrawal for a specific user based on the provided username",
                 "consumes": [
                     "application/json"

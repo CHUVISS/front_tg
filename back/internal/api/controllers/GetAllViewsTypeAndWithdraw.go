@@ -17,6 +17,7 @@ import (
 // @Success 200 {object} map[string]int64 "Map of channel types and their total views"
 // @Failure 500 {object} map[string]string "Internal server error"
 // @Router /channels/all [get]
+// @Security     BearerAuth
 func (h *Handler) GetAllViewsTypeAndWithdraw(c echo.Context) error {
 	channelsType := []string{"youtube", "tiktok", "instagram", "facebook"}
 	view := make(map[string]int64)

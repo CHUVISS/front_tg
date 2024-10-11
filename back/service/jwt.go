@@ -11,7 +11,7 @@ import (
 )
 
 type Claims struct {
-	Email string `json:"email"`
+	Username string `json:"username"`
 	jwt.StandardClaims
 }
 
@@ -39,7 +39,7 @@ func JWTMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 
 		if claims, ok := token.Claims.(*Claims); ok && token.Valid {
-			c.Set("userEmail", claims.Email)
+			c.Set("userEmail", claims.Username)
 			return next(c)
 		}
 
@@ -47,10 +47,10 @@ func JWTMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	}
 }
 
-func GenerateJWT(email string) string {
-	expirationTime := time.Now().Add(5 * time.Minute)
+func GenerateJWT(username string) string {
+	expirationTime := time.Now().Add(60 * time.Minute)
 	claims := &Claims{
-		Email: email,
+		Username: username,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 		},

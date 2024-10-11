@@ -16,6 +16,7 @@ import (
 // @Success 200 {array} model.WithdrawInfo "List of all withdraw notes"
 // @Failure 500 {object} map[string]string "Internal server error"
 // @Router /withdraw/all [get]
+// @Security     BearerAuth
 func (h *Handler) GetAllWithdraw(c echo.Context) error {
 	allnote := withdraw.GetAll(h.repository)
 	return c.JSON(http.StatusOK, allnote)
