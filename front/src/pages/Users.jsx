@@ -4,22 +4,31 @@ import { Link } from 'react-router-dom';
 
 const Users = () => {
   const [usersData, setUsersData] = useState([]);
+  
 
   // Функция для получения данных с бэкенда и обновления состояния
   const fetchUsersData = async () => {
+    const token = localStorage.getItem('jwtToken');
     try {
-      const response = await fetch('http://localhost:8080/users/all');
+      const response = await fetch('http://172.19.0.3:8080/users/all', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
       if (!response.ok) {
         throw new Error(`Ошибка HTTP: ${response.status}`);
       }
       const data = await response.json();
-  
+      console.log('Данные просмотров:', data);
   
       if (Array.isArray(data) && data.length > 0) {
         const transformedData = data.map((user, index) => ({
           id: index + 1,
-          telegramUsername: `${user.TgId}`,
-          telegramLink: `https://t.me/${user.TgId}`,
+          telegramUsername: `@${user.Username}`,
+          usernameTg: user.Username,
+          telegramLink: `https://t.me/@${user.Username}`,
           channelsCount: user.Channels,
           wallet: user.Wallet,
           referrals: user.Referrals,
@@ -58,7 +67,7 @@ const Users = () => {
           {usersData.map((user) => (
             <tr key={user.id}>
               <td>
-                <Link to={`/users/${user.telegramUsername}`}>
+                <Link to={`/users/${user.usernameTg}`}>
                   <button>{user.telegramUsername}</button>
                 </Link>
               </td>

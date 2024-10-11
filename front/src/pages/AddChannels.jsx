@@ -5,9 +5,9 @@ const AddChannels = () => {
   const [channels, setChannels] = useState([
     {
       id: 1,
-      username: '@user1',
+      username: 'user1',
       socialNetwork: 'YouTube',
-      link: 'https://www.youtube.com/user1',
+      link: 'youtube.com',
     },
     {
       id: 2,
@@ -41,46 +41,27 @@ const AddChannels = () => {
   const handleDecline = async () => {
     const channelId = selectedChannel.id;
     closeModal();
-
-    try {
-      const response = await fetch(`/api/channels/delete`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ id: channelId }),
-      });
-
-      if (response.ok) {
-        setChannels(channels.filter((channel) => channel.id !== channelId));
-        // Убрали alert
-      } else {
-        console.error('Ошибка при удалении канала.');
-      }
-    } catch (error) {
-      console.error('Ошибка при удалении канала:', error);
-    }
+    // Удаляем канал из списка
+    setChannels((prevChannels) => prevChannels.filter((channel) => channel.id !== channelId));
   };
 
   const handleAccept = async () => {
     const channelId = selectedChannel.id;
     const username = selectedChannel.username;
     const linkSocial = selectedChannel.link;
-    const socialNetwork = selectedChannel.socialNetwork;
+    const token = localStorage.getItem('jwtToken');
     closeModal();
 
     try {
-      const response = await fetch(`http://localhost:8080/users/add`, {
+      const response = await fetch(`http://172.19.0.3:8080/users/confirm`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
-          social_link: linkSocial,
-          tgId: username,
-          wallet: 'TRC20',
-          social_name: socialNetwork,
-          count_views: 0,
+          url_channel: linkSocial,
+          usernameTg: username, 
         }),
       });
 

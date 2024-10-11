@@ -8,7 +8,6 @@ const DropdownSearchPage = () => {
 
   // Данные для выпадающего списка
   const options = ['YouTube', 'TikTok', 'Instagram', 'Facebook'];
-  //const users = [{telegramUsername: '@user1', telegramLink: 'https://t.me/user1',}, {telegramUsername: '@user2', telegramLink: 'https://t.me/user2'}]
 
   // Функция для обработки изменения выбора в выпадающем списке
   const handleSelectChange = (event) => {
@@ -20,55 +19,78 @@ const DropdownSearchPage = () => {
     setSearchTerm(event.target.value);
   };
 
-  // Фильтрация опций на основе значения поиска
-  const filteredOptions = options.filter((option) =>
-    option.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Функция для обработки нажатия на кнопку "Парсинг"
+  const handleParsing = async () => {
+    if (!selectedOption || !searchTerm) {
+      alert('Пожалуйста, выберите тип канала и введите URL канала.');
+      return;
+    }
+
+    // Данные, которые будут отправлены на сервер
+    const requestData = {
+      url: searchTerm,
+      type_channel: selectedOption.toLowerCase(),
+    };
+    const token = localStorage.getItem('jwtToken');
+    try {
+      const response = await fetch('http://172.19.0.3:8080/parsing/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(requestData), // Преобразуем данные в JSON
+      });
+
+      if (!response.ok) {
+        throw new Error(`Ошибка HTTP: ${response.status}`);
+      }
+
+      await response.json(); // Получаем ответ от сервера
+      alert(`Вы выбрали: ${selectedOption}, ввели: ${searchTerm}`);// Уведомление об успехе
+    } catch (error) {
+      console.error('Ошибка при отправке данных:', error);
+      alert('Ошибка при отправке данных на сервер.'); // Уведомление об ошибке
+    }
+  };
 
   return (
     <div style={{ padding: '20px' }}>
       <h1>Парсинг</h1>
 
-      {/* Выпадающий список */}
-      <label htmlFor="dropdown">Выберите пункт:</label>
-      <select
-        id="dropdown"
-        value={selectedOption}
-        onChange={handleSelectChange}
-        style={{ display: 'block', margin: '10px 0', padding: '10px' }}
-      >
-        <option value="">-- Select an option --</option>
-        {options.map((option, index) => (
-          <option key={index} value={option}>
-            {option}
-          </option>
-        ))}
-      </select>
+      {/* Контейнер для выпадающего списка и поля поиска */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        {/* Выпадающий список */}
+        <label htmlFor="dropdown">Выберите пункт:</label>
+        <select
+          id="dropdown"
+          value={selectedOption}
+          onChange={handleSelectChange}
+          style={{ padding: '10px' }}
+        >
+          <option value="">-- Select an option --</option>
+          {options.map((option, index) => (
+            <option key={index} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+        
+        {/* Поле поиска */}
+        <input
+          type="text"
+          id="search"
+          value={searchTerm}
+          onChange={handleSearchChange}
+          placeholder="Введите для парсинга..."
+          style={{ padding: '10px', flex: 1 }}
+        />
 
-      {/* Поле поиска */}
-      <label htmlFor="search">Поиск:</label>
-      <input
-        type="text"
-        id="search"
-        value={searchTerm}
-        onChange={handleSearchChange}
-        placeholder="Введите для поиска..."
-        style={{ display: 'block', margin: '10px 0', padding: '10px' }}
-      />
-
-      {/* Вывод выбранного элемента */}
-      {selectedOption && (
-        <div style={{ marginTop: '20px' }}>
-          <strong>Выбранный пункт:</strong> {selectedOption}
-        </div>
-      )}
-      {/* Отображение результата поиска */}
-      <ul>
-        {filteredOptions.map((option, index) => (
-          <li key={index}>{option}</li>
-        ))}
-      </ul>
-
+        {/* Кнопка Парсинг */}
+        <button onClick={handleParsing} style={{ padding: '10px 20px' }}>
+          Парсинг
+        </button>
+      </div>
     </div>
   );
 };

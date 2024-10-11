@@ -3,25 +3,34 @@ import styles from '../styles/LoginPage.module.css'; // Подключение C
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [password_admin, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await fetch('/api/login', {
+      const response = await fetch('http://172.19.0.3:8080/auth', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          username,
-          password,
+          name: username,
+          password: password_admin,
         }),
       });
 
       const data = await response.json();
+      console.log('Данные пользователя:', data);
+
+      // Сохраняем JWT токен в localStorage
+      if (data.message) {
+        localStorage.setItem('jwtToken', data.message);
+        console.log('JWT токен сохранен в localStorage');
+      } else {
+        console.error('Токен не найден в ответе');
+      }
 
       if (response.ok) {
         alert('Вход выполнен успешно');
@@ -57,7 +66,7 @@ const LoginPage = () => {
           <input
             type="password"
             id="password"
-            value={password}
+            value={password_admin}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
