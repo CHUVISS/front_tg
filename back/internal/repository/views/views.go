@@ -116,11 +116,11 @@ func GetChannelCountViewsMonth(channelId uint, db *gorm.DB) (int64, error) {
 
 	now := time.Now()
 
-	start := time.Date(now.Year(), now.Month()-1, 1, 0, 0, 0, 0, now.Location())
-	end := start.AddDate(0, 1, 0)
+	// Определяем время ровно месяц назад
+	oneMonthAgo := now.AddDate(0, -1, 0)
 
 	err := db.Table("views").
-		Where("update_date >= ? AND update_date < ? AND channel_id = ?", start, end, channelId).
+		Where("update_date >= ? AND update_date < ? AND channel_id = ?", oneMonthAgo, now, channelId).
 		Select("SUM(views_count)").
 		Scan(&total).Error
 
@@ -141,11 +141,11 @@ func GetCountViewsMonth(db *gorm.DB) (int64, error) {
 
 	now := time.Now()
 
-	start := time.Date(now.Year(), now.Month()-1, 1, 0, 0, 0, 0, now.Location())
-	end := start.AddDate(0, 1, 0)
+	// Определяем время ровно месяц назад
+	oneMonthAgo := now.AddDate(0, -1, 0)
 
 	err := db.Table("views").
-		Where("update_date >= ? AND update_date < ?", start, end).
+		Where("update_date >= ? AND update_date < ?", oneMonthAgo, now).
 		Select("SUM(views_count)").
 		Scan(&total).Error
 
