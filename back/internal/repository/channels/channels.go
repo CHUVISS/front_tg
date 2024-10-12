@@ -73,39 +73,47 @@ func GetChannelType(id uint, db *gorm.DB) string {
 	return typeChannel
 }
 
-func GetAllUserChannels(userId uint, db *gorm.DB) map[uint]model.ChannelsInfo {
-	channel := make(map[uint]model.ChannelsInfo)
+func GetAllUserChannels(userId uint, db *gorm.DB) map[string]map[uint]model.ChannelsInfo {
+	// Инициализируем основную карту
+	channel := make(map[string]map[uint]model.ChannelsInfo)
 
+	// Получаем идентификаторы всех каналов пользователя
 	channelsId := GetAllUserChannelsId(userId, db)
-	fmt.Println(channelsId)
 	for _, v := range channelsId {
 		channelType := GetChannelType(v, db)
 
-		if _, exists := channel[v]; !exists {
-			channel[v] = model.ChannelsInfo{}
+		// Проверяем, существует ли карта для данного типа канала, если нет, инициализируем её
+		if _, exists := channel[channelType]; !exists {
+			channel[channelType] = make(map[uint]model.ChannelsInfo)
 		}
 
-		channelsInfo := channel[v]
+		// Получаем структуру для данного канала
+		channelsInfo := channel[channelType][v]
+
+		// Получаем количество просмотров и обрабатываем ошибки
 		count, err := views.GetCountViews(v, db)
 		if err != nil {
-			panic(err)
+			panic(err) // Можно заменить panic на обработку ошибок
 		}
 		channelsInfo.CountViews = count
 		channelsInfo.Url = GetLink(v, channelType, db)
+
+		// Получаем дополнительные данные о просмотрах
 		channelsInfo.CountDayViews, err = views.GetChannelCountViewsDay(v, db)
 		if err != nil {
-			panic(err)
+			panic(err) // Можно заменить panic на обработку ошибок
 		}
 		channelsInfo.CountMonthViews, err = views.GetChannelCountViewsMonth(v, db)
 		if err != nil {
-			panic(err)
+			panic(err) // Можно заменить panic на обработку ошибок
 		}
 		channelsInfo.CountWeekViews, err = views.GetChannelCountViewsWeek(v, db)
 		if err != nil {
-			panic(err)
+			panic(err) // Можно заменить panic на обработку ошибок
 		}
 
-		channel[v] = channelsInfo
+		// Сохраняем обновленную информацию о канале
+		channel[channelType][v] = channelsInfo
 	}
 
 	return channel

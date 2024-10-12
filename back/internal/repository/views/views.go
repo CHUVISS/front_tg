@@ -27,7 +27,7 @@ func GetCountViews(channelId uint, db *gorm.DB) (int64, error) {
 
 func GetCountViewsDay(db *gorm.DB) (int64, error) {
 	var total sql.NullInt64
-	startOfDay := time.Now().Truncate(24 * time.Hour)
+	startOfDay := time.Now().Add(-24 * time.Hour).Truncate(24 * time.Hour)
 	endOfDay := startOfDay.Add(24 * time.Hour)
 
 	err := db.Table("views").
