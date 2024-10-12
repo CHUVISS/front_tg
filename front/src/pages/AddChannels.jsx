@@ -116,7 +116,7 @@ const AddChannels = () => {
               <td>{channel.socialNetwork}</td>
               <td>
                 <a href={channel.link} target="_blank" rel="noopener noreferrer">
-                  Открыть
+                  {channel.link.split("/")[3]}
                 </a>
               </td>
               <td>

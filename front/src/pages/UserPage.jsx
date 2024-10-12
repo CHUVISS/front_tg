@@ -114,7 +114,7 @@
                 <tr key={index}>
                   <td>
                     <a href={channel.link} target="_blank" rel="noopener noreferrer">
-                      Открыть канал
+                      {channel.link.split("/")[3]}
                     </a>
                   </td>
                   <td>{channel.viewsTotal}</td>
