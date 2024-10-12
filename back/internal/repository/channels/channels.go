@@ -42,7 +42,11 @@ func GetAllTypeChannelsId(channelType string, db *gorm.DB) []uint {
 func CountViewsTypeChannels(ids []uint, db *gorm.DB) int64 {
 	var countViews int64
 	for _, v := range ids {
-		countViews += views.GetCountViews(v, db)
+		count, err := views.GetCountViews(v, db)
+		if err != nil {
+			panic(err)
+		}
+		countViews += count
 	}
 	return countViews
 }
@@ -69,20 +73,24 @@ func GetChannelType(id uint, db *gorm.DB) string {
 	return typeChannel
 }
 
-func GetAllUserChannels(userId uint, db *gorm.DB) map[string]model.ChannelsInfo {
-	channel := make(map[string]model.ChannelsInfo)
+func GetAllUserChannels(userId uint, db *gorm.DB) map[uint]model.ChannelsInfo {
+	channel := make(map[uint]model.ChannelsInfo)
 
 	channelsId := GetAllUserChannelsId(userId, db)
-	var err error
+	fmt.Println(channelsId)
 	for _, v := range channelsId {
 		channelType := GetChannelType(v, db)
 
-		if _, exists := channel[channelType]; !exists {
-			channel[channelType] = model.ChannelsInfo{}
+		if _, exists := channel[v]; !exists {
+			channel[v] = model.ChannelsInfo{}
 		}
 
-		channelsInfo := channel[channelType]
-		channelsInfo.CountViews = views.GetCountViews(v, db)
+		channelsInfo := channel[v]
+		count, err := views.GetCountViews(v, db)
+		if err != nil {
+			panic(err)
+		}
+		channelsInfo.CountViews = count
 		channelsInfo.Url = GetLink(v, channelType, db)
 		channelsInfo.CountDayViews, err = views.GetChannelCountViewsDay(v, db)
 		if err != nil {
@@ -97,7 +105,7 @@ func GetAllUserChannels(userId uint, db *gorm.DB) map[string]model.ChannelsInfo 
 			panic(err)
 		}
 
-		channel[channelType] = channelsInfo
+		channel[v] = channelsInfo
 	}
 
 	return channel

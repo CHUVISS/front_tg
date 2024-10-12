@@ -43,7 +43,11 @@ func UpdateBalance(id uint, value int64, db *gorm.DB) error {
 func GetAllViews(ids []uint, db *gorm.DB) int64 {
 	var totalAmount int64
 	for _, i := range ids {
-		totalAmount += views.GetCountViews(i, db)
+		count, err := views.GetCountViews(i, db)
+		if err != nil {
+			panic(err)
+		}
+		totalAmount += count
 	}
 	return totalAmount
 
@@ -77,7 +81,7 @@ func Get(username string, db *gorm.DB) model.UserInfo {
 
 func GetAllChannelsAdd(db *gorm.DB) []model.ChannelsAdd {
 	var AllNote = make([]channels.ChannelsRepo, 0)
-	result := db.Where("confirmed IS NULL").Find(&AllNote)
+	result := db.Where("confirmed IS FALSE").Find(&AllNote)
 	vsm := make([]model.ChannelsAdd, len(AllNote))
 	if result.Error != nil {
 		fmt.Println(result.Error.Error())

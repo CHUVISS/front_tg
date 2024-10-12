@@ -1,22 +1,32 @@
 package views
 
 import (
+	"database/sql"
 	"time"
 
 	"gorm.io/gorm"
 )
 
-func GetCountViews(channelId uint, db *gorm.DB) int64 {
-	var totalAmount int64
-	db.Table("views").
+func GetCountViews(channelId uint, db *gorm.DB) (int64, error) {
+	var total sql.NullInt64
+	err := db.Table("views").
 		Where("channel_id = ?", channelId).
 		Select("SUM(views_count)").
-		Scan(&totalAmount)
-	return totalAmount
+		Scan(&total).Error
+	if err != nil {
+		return 0, err
+	}
+
+	// Проверяем, есть ли значение
+	if total.Valid {
+		return total.Int64, nil // Возвращаем значение, если оно не NULL
+	}
+
+	return 0, nil // Если значение NULL, возвращаем 0
 }
 
 func GetCountViewsDay(db *gorm.DB) (int64, error) {
-	var total int64
+	var total sql.NullInt64
 	startOfDay := time.Now().Truncate(24 * time.Hour)
 	endOfDay := startOfDay.Add(24 * time.Hour)
 
@@ -24,59 +34,85 @@ func GetCountViewsDay(db *gorm.DB) (int64, error) {
 		Where("update_date >= ? AND update_date < ?", startOfDay, endOfDay).
 		Select("SUM(views_count)").Scan(&total).Error
 
-	return total, err
+	if err != nil {
+		return 0, err
+	}
+
+	// Проверяем, есть ли значение
+	if total.Valid {
+		return total.Int64, nil // Возвращаем значение, если оно не NULL
+	}
+
+	return 0, nil // Если значение NULL, возвращаем 0
 }
 
 func GetCountViewsWeek(db *gorm.DB) (int64, error) {
-	var totalViews int64
+	var total sql.NullInt64
 	oneWeekAgo := time.Now().AddDate(0, 0, -7)
 	now := time.Now()
 
-	result := db.Table("views").
+	err := db.Table("views").
 		Where("update_date >= ? AND update_date <= ?", oneWeekAgo, now).
 		Select("SUM(views_count)").
-		Scan(&totalViews)
+		Scan(&total).Error
 
-	// Проверка на ошибки
-	if result.Error != nil {
-		return 0, result.Error
+	if err != nil {
+		return 0, err
 	}
 
-	return totalViews, nil
+	// Проверяем, есть ли значение
+	if total.Valid {
+		return total.Int64, nil // Возвращаем значение, если оно не NULL
+	}
+
+	return 0, nil // Если значение NULL, возвращаем 0
 }
 
-func GetChannelCountViewsWeek(channelId uint, db *gorm.DB) (*int64, error) {
-	var totalViews *int64
+func GetChannelCountViewsWeek(channelId uint, db *gorm.DB) (int64, error) {
+	var total sql.NullInt64
 	oneWeekAgo := time.Now().AddDate(0, 0, -7)
 	now := time.Now()
 
-	result := db.Table("views").
-		Where("update_date >= ? AND update_date <= ?", oneWeekAgo, now).
+	err := db.Table("views").
+		Where("update_date >= ? AND update_date <= ? AND channel_id = ?", oneWeekAgo, now, channelId).
 		Select("SUM(views_count)").
-		Scan(&totalViews)
+		Scan(&total).Error
 
-	// Проверка на ошибки
-	if result.Error != nil {
-		return nil, result.Error
+	if err != nil {
+		return 0, err
 	}
 
-	return totalViews, nil
+	// Проверяем, есть ли значение
+	if total.Valid {
+		return total.Int64, nil // Возвращаем значение, если оно не NULL
+	}
+
+	return 0, nil // Если значение NULL, возвращаем 0
 }
 
-func GetChannelCountViewsDay(channelId uint, db *gorm.DB) (*int64, error) {
-	var total *int64
-	startOfDay := time.Now().Truncate(24 * time.Hour)
+func GetChannelCountViewsDay(channelId uint, db *gorm.DB) (int64, error) {
+	var total sql.NullInt64
+	// Получаем начало и конец предыдущего дня
+	startOfDay := time.Now().Add(-24 * time.Hour).Truncate(24 * time.Hour)
 	endOfDay := startOfDay.Add(24 * time.Hour)
 
 	err := db.Table("views").
 		Where("update_date >= ? AND update_date < ? AND channel_id = ?", startOfDay, endOfDay, channelId).
 		Select("SUM(views_count)").Scan(&total).Error
+	if err != nil {
+		return 0, err
+	}
 
-	return total, err
+	// Проверяем, есть ли значение
+	if total.Valid {
+		return total.Int64, nil // Возвращаем значение, если оно не NULL
+	}
+
+	return 0, nil // Если значение NULL, возвращаем 0
 }
 
-func GetChannelCountViewsMonth(channelId uint, db *gorm.DB) (*int64, error) {
-	var total *int64
+func GetChannelCountViewsMonth(channelId uint, db *gorm.DB) (int64, error) {
+	var total sql.NullInt64
 
 	now := time.Now()
 
@@ -89,14 +125,19 @@ func GetChannelCountViewsMonth(channelId uint, db *gorm.DB) (*int64, error) {
 		Scan(&total).Error
 
 	if err != nil {
-		return nil, err
+		return 0, err
 	}
 
-	return total, nil
+	// Проверяем, есть ли значение
+	if total.Valid {
+		return total.Int64, nil // Возвращаем значение, если оно не NULL
+	}
+
+	return 0, nil // Если значение NULL, возвращаем 0
 }
 
 func GetCountViewsMonth(db *gorm.DB) (int64, error) {
-	var total int64
+	var total sql.NullInt64
 
 	now := time.Now()
 
@@ -112,5 +153,10 @@ func GetCountViewsMonth(db *gorm.DB) (int64, error) {
 		return 0, err
 	}
 
-	return total, nil
+	// Проверяем, есть ли значение
+	if total.Valid {
+		return total.Int64, nil // Возвращаем значение, если оно не NULL
+	}
+
+	return 0, nil // Если значение NULL, возвращаем 0
 }
