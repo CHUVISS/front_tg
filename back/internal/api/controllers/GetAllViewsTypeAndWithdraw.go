@@ -44,6 +44,7 @@ func (h *Handler) GetAllViewsTypeAndWithdraw(c echo.Context) error {
 	view["day_views"] = viewDay
 	view["month_views"] = viewMonth
 	view["total_views"] = sum
+	view["total_withdraw_accept"] = withdraw.GetTotalAmountAccept(h.repository)
 	view["total_withdraw"] = withdraw.GetTotalAmount(h.repository)
 
 	return c.JSON(http.StatusOK, view)

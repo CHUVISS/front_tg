@@ -18,9 +18,15 @@ func GetAll(db *gorm.DB) []model.WithdrawInfo {
 	return Map(allNote, db)
 }
 
+func GetTotalAmountAccept(db *gorm.DB) int64 {
+	var totalAmount int64
+	db.Table("withdraw").Where("confirmed IS TRUE").Select("SUM(amount)").Scan(&totalAmount)
+	return totalAmount
+}
+
 func GetTotalAmount(db *gorm.DB) int64 {
 	var totalAmount int64
-	db.Table("withdraw").Select("SUM(amount)").Scan(&totalAmount)
+	db.Table("withdraw").Where("confirmed IS NULL").Select("SUM(amount)").Scan(&totalAmount)
 	return totalAmount
 }
 

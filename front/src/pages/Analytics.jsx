@@ -38,6 +38,7 @@ const Analytics = () => {
             }
 
             const data = await response.json(); // Получаем данные в формате JSON
+            console.log('Данные просмотров:', data);
 
             // Преобразуем данные для отображения
             const transformedData = [
@@ -50,6 +51,7 @@ const Analytics = () => {
                 {name: 'Всего просмотров месяц', value: convertToShortNum(data.month_views) || '0'},
                 {name: 'Всего просмотров', value: convertToShortNum(data.total_views) || '0'},
                 {name: 'На выплату', value: data.total_withdraw || '0'},
+                {name: 'Выплаченно', value: data.total_withdraw_accept || '0'},
             ];
 
             setData(transformedData); // Обновляем состояние с полученными данными
